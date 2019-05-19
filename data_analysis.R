@@ -11,33 +11,33 @@ FITSmoothSpline <- function(data, x, y){
 
 PhenospexAUC <- function(datafile, time_cutoff = NA, properties){
     planteye_data <- read.csv(datafile)
-    planteye_data <- arrange(planteye_data, species, block, time)
+    planteye_data <- arrange(planteye_data, genotype, unit, timestamp)
     
     # filter out data points passing the time_cutoff
     if(!is.na(time_cutoff)){
-        planteye_data <- filter(planteye_data, time <= time_cutoff)
+        planteye_data <- filter(planteye_data, timestamp <= time_cutoff)
     }
 
     n_dis_prop <- length(properties)
-    dis_block <- distinct(planteye_data, block)
-    n_dis_block <- length(dis_block)
+    dis_unit <- distinct(planteye_data, unit)
+    n_dis_unit <- length(dis_unit)
 
     k <- 1
-    auc_data <- data.frame(block=planteye_data$block)
+    auc_data <- data.frame(unit=planteye_data$unit)
     
     for(property in properties) {
-        auc_temp <- rep(NA, n_dis_block)
+        auc_temp <- rep(NA, n_dis_unit)
         data_property <- planteye_data %>% 
-                            select(time, property, block, species) %>%
+                            select(timestamp, property, unit, genotype) %>%
                             mutate_(y = property)
 
         i <- 1
         fitted_values_total <- rep(NA, 3)
-        for(b in dis_block$block){
-            data_property_block <- data_property %>% filter(block == b) 
+        for(b in dis_unit$unit){
+            data_property_unit <- data_property %>% filter(unit == b) 
             
-            fitted_values <- FITSmoothSpline(data_property_block, "time", property)
-            fitted_values_total <- rbind(fitted_values_total, data.frame(data_property_block$species, fitted_values))
+            fitted_values <- FITSmoothSpline(data_property_unit, "timestamp", property)
+            fitted_values_total <- rbind(fitted_values_total, data.frame(data_property_unit$genotype, fitted_values))
 
             auc_temp[i] <- auc(fitted_values$x, fitted_values$y)
             i <- i+1
@@ -48,27 +48,27 @@ PhenospexAUC <- function(datafile, time_cutoff = NA, properties){
         names(auc_data)[k] <- property
         
         fitted_values_total <- fitted_values_total[-1, ]
-        names(fitted_values_total)[1] <- "species"
+        names(fitted_values_total)[1] <- "genotype"
 
-        fitted_mean <- fitted_values_total %>% group_by(x, species) %>% summarise(y = mean(y, na.rm=TRUE))
+        fitted_mean <- fitted_values_total %>% group_by(x, genotype) %>% summarise(y = mean(y, na.rm=TRUE))
         data_property <- mutate(data_property, fitted = y)
         
         pdf(paste("plot", "_", property, ".pdf", sep=""))
-        g <- ggplot(data_property, aes(time, y)) + geom_point() + geom_line(data=fitted_mean, aes(x, y, color=species))
+        g <- ggplot(data_property, aes(timestamp, y)) + geom_point() + geom_line(data=fitted_mean, aes(x, y, color=genotype))
         print(g)
         dev.off()
     }
 
-    auc_data$species <- fitted_values_total$species
+    auc_data$genotype <- fitted_values_total$genotype
 
-    # anova test on the auc values of different species
+    # anova test on the auc values of different genotype
 
     mse_results <- rep(NA, n_dis_prop)
     pvalues_results <- rep(NA, n_dis_prop)
     k <- 1
     for(property in properties){
-      aov_specis <- aov(auc_data[, property] ~ auc_data$species)
-      aov_results <- summary(aov_specis)[[1]]
+      aov_genotype <- aov(auc_data[, property] ~ auc_data$genotype)
+      aov_results <- summary(aov_genotype)[[1]]
       mse_results[k] <- aov_results[2, 3]
       pvalues_results[k] <- aov_results[1, 5]
       k <- k+1
