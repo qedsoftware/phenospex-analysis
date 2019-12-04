@@ -1,72 +1,51 @@
-library(dplyr)
-library(MESS)
-library(ggplot2)
 
+# estimate generalized additive model (gam) from mgcv library
 
-# example:  PhenospexAnalysis("planteye_simu.csv", properties = c("y1", "y2"))
-
-FitGrowthCurve <- function(data, x, y){
-    fit <- smooth.spline(data[, x], data[, y], cv = TRUE)
-    fitted_values <- predict(fit, data[, x])
-    fitted_values <- data.frame(x = fitted_values$x, y = fitted_values$y)
-    return(fitted_values)
+PredictGrowthCurve <- function(data_property_unit, x, y, startx, endx){
+    data_fit <- data.frame(x=data_property_unit[, x], y = data_property_unit[, y])
+    fit <- gam(y~s(x), data=data_fit)
+    predicx <- seq(startx, endx, by=8)
+    predict_values <- data.frame(x=predictx, y= predict(fit, data.frame(x=predictx)))
+    return(predict_values)
 }
 
-GetPhenospexAUC <- function(planteye_data, properties){
+GetPhenospexAUC <- function(planteye_data, property, mintime, maxtime){
 
-    n_dis_prop <- length(properties)
     dis_unit <- distinct(planteye_data, unit)
     n_dis_unit <- length(dis_unit)
+    auc_temp <- rep(NA, n_dis_unit)
+    genotype <- rep(NA, n_dis_unit)
 
-    k <- 1
-    auc_data <- data.frame(unit = planteye_data$unit)
+    data_property <- planteye_data %>% 
+            dplyr::select(timestamp, property, unit, genotype) %>% 
+            mutate_(y = property)
 
-    for (property in properties) {
-        auc_temp <- rep(NA, n_dis_unit)
-        data_property <- planteye_data %>%
-        select(timestamp, property, unit, genotype) %>%
-        mutate_(y = property)
+    i <- 1
 
-        i <- 1
-        fitted_values_total <- rep(NA, 3)
-        for (b in dis_unit$unit){
-            data_property_unit <- data_property %>% filter(unit == b)
-
-            fitted_values <- FitGrowthCurve(data_property_unit,
-                                            "timestamp",
-                                            property)
-            fitted_values_total <- rbind(fitted_values_total,
-                                         data.frame(data_property_unit$genotype,
-                                                    fitted_values))
-
-            auc_temp[i] <- auc(fitted_values$x, fitted_values$y)
-            i <- i + 1
-        }
-        auc_data <- cbind(auc_data, index = auc_temp)
-
-        k <- k + 1
-        names(auc_data)[k] <- property
-
-        fitted_values_total <- fitted_values_total[-1, ]
-        names(fitted_values_total)[1] <- "genotype"
-
-        fitted_mean <- fitted_values_total %>%
-        group_by(x, genotype) %>%
-        summarise(y = mean(y, na.rm = TRUE))
-        data_property <- mutate(data_property, fitted = y)
-
-        pdf(paste("plot", "_", property, ".pdf", sep = ""))
-        g <- ggplot(data_property,
-                    aes(timestamp, y)) +
-                    geom_point() +
-                    geom_line(data = fitted_mean,
-                    aes(x, y, color = genotype))
-        print(g)
-    dev.off()
+    for (b in dis_unit$unit){
+        data_property_unit <- data_property %>% filter(unit == b)
+        
+        # align the prediction range for all the units
+        startx <- (mintime - as.numeric(data_property_unit$timestamp[1]))/3600
+        endx <- (maxtime - as.numeric(data_property_unit$timestamp[1]))/3600
+        data_property_unit$timestamp <- as.numeric(data_property_unit$timestamp - data_property_unit$timestamp[1])/3600
+        
+        predict_values <- PredictGrowthCurve(data_property_unit,
+                                        "timestamp",
+                                        property,
+                                        startx,
+                                        endx)
+        
+        lentime <- (maxtime - mintime)/3600
+        auc_temp[i] <- auc(predict_values$x, predict_values$y) - lentime*predict_values$y[1] 
+        genotype[i] <- as.character(data_property_unit$genotype[1])
+        i <- i + 1
+    
     }
-    auc_data$genotype <- fitted_values_total$genotype
+    auc_data <- data.frame(unit=dis_unit, auc = auc_temp, genotype)
     return(auc_data)
-}
+    
+    }
 
 PhenospexANOVA <- function(auc_data, properties){
     n_dis_prop <- length(properties)
@@ -87,14 +66,3 @@ PhenospexANOVA <- function(auc_data, properties){
               "auc_anova_results.csv", row.names = FALSE)
 }
 
-
-PhenospexAnalysis <- function(datafile, time_cutoff = NA, properties){
-    planteye_data <- read.csv(datafile)
-    planteye_data <- arrange(planteye_data, genotype, unit, timestamp)
-
-    if (!is.na(time_cutoff)){
-        planteye_data <- filter(planteye_data, timestamp <= time_cutoff)
-    }
-    auc_data <- GetPhenospexAUC(planteye_data, properties)
-    PhenospexANOVA(auc_data, properties)
-}
