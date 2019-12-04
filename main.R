@@ -32,7 +32,7 @@ planteye_data <- arrange(planteye_data, unit, timestamp)
 
 
 # data cleaning
-
+properties <- c("Height")
 for(property in properties){
     planteye_data_cleaned <- data_cleaning(planteye_data, property)
 
@@ -45,7 +45,7 @@ for(property in properties){
 
     # auc estimation 
 
-    auc_data <- GetPhenospexAUC(planteye_data, property, mintime, maxtime)
+    auc_data <- GetPhenospexAUC(planteye_data_cleaned, property, mintime, maxtime)
     write.csv(auc_data, paste("auc_", property, ".csv", sep=""), row.names=FALSE)
 
 }
