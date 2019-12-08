@@ -4,7 +4,7 @@
 PredictGrowthCurve <- function(data_property_unit, x, y, startx, endx){
     data_fit <- data.frame(x=data_property_unit[, x], y = data_property_unit[, y])
     fit <- gam(y~s(x), data=data_fit)
-    predicx <- seq(startx, endx, by=8)
+    predictx <- seq(startx, endx, by=8)
     predict_values <- data.frame(x=predictx, y= predict(fit, data.frame(x=predictx)))
     return(predict_values)
 }
