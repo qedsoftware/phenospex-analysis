@@ -1,0 +1,26 @@
+Package: phenospex-analysis
+Type: Package
+Title: Phenospex Analysis
+Version: 1.1
+Date: 2012-12-12
+Author: Jiehua Chen <j@qed.ai>
+Maintainer: Jiehua Chen <j@qed.ai>
+Description: Phenospex Analysis investigates parametric data acquired from 
+    the HortControl software hich interfaces with the Phenospex phenotyping
+    rig that is based on 3D laser triangulation. The current topics of 
+    investigation include data cleaning and growth curve fitting.
+License: MIT + file LICENSE
+URL: https://github.com/qedsoftware/phenospex-analysis
+BugReports: https://github.com/qedsoftware/phenospex-analysis/issues
+VignetteBuilder: knitr
+Suggests:
+    knitr,
+    rmarkdown
+Depends:
+    R (>= 3.5),
+Imports:
+    dplyr (>= 1.1),
+    MESS (>= 0.5.5),
+    mgcv (>= 1.8),
+    grofit (>= 1.1.1)
+RoxygenNote: 6.0.1
