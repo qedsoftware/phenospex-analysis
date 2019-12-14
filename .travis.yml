@@ -1,5 +1,10 @@
 language: R
+
+# use containers; runs faster
 sudo: false
+
 cache: packages
 os:
-- linux
+  - linux
+r_github_packages:
+  - jimhester/lintr
