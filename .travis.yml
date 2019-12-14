@@ -1,7 +1,6 @@
-language: r
-
-r:
-  - oldrel
-  - release
-  - devel
-
+language: R
+sudo: false
+cache: packages
+os:
+- linux
+- osx

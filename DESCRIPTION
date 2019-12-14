@@ -15,12 +15,14 @@ BugReports: https://github.com/qedsoftware/phenospex-analysis/issues
 VignetteBuilder: knitr
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    grofitr
 Depends:
-    R (>= 3.5),
+    R (>= 3.3.0),
 Imports:
     dplyr (>= 1.1),
     MESS (>= 0.5.5),
-    mgcv (>= 1.8),
-    grofit (>= 1.1.1)
+    mgcv (>= 1.8)
+Remotes:
+    cran/grofit
 RoxygenNote: 6.0.1
