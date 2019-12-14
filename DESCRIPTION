@@ -1,8 +1,7 @@
 Package: phenospex-analysis
-Type: Package
-Title: Phenospex Analysis
 Version: 1.1
 Date: 2012-12-12
+Title: Phenospex Analysis
 Author: Jiehua Chen <j@qed.ai>
 Maintainer: Jiehua Chen <j@qed.ai>
 Description: Phenospex Analysis investigates parametric data acquired from 
@@ -12,9 +11,7 @@ Description: Phenospex Analysis investigates parametric data acquired from
 License: MIT + file LICENSE
 URL: https://github.com/qedsoftware/phenospex-analysis
 BugReports: https://github.com/qedsoftware/phenospex-analysis/issues
-VignetteBuilder: knitr
-Depends:
-    R (>= 3.3.0),
+Depends: R (>= 3.3.0)
 Imports:
     dplyr (>= 1.1),
     MESS (>= 0.5.5),
