@@ -6,6 +6,9 @@ of crops (e.g. eggplants and peppers) using 3D phenotyping techniques.
 
 [![Build Status](https://travis-ci.org/qedsoftware/phenospex-analysis.svg?branch=master)](https://travis-ci.org/qedsoftware/phenospex-analysis)
 
+![Phenospex Rig](https://qed.ai/docs/images/WorldVeg_QED_Phenospex_Angled.jpg)
+
+
 
 
 # Data Requirements
@@ -14,9 +17,34 @@ of crops (e.g. eggplants and peppers) using 3D phenotyping techniques.
 * It is best to delete any spaces and special characters in the column names, in advance. (for example, "Height (mm)" should be edited to "Height").
 * Please make sure that the date format for ```timestamp``` is "MM/DD/YYYY HH/MM/SS". For example: "10/23/2019  1:34:00 PM".
 
-# Install R libraries
-* ```grofit``` library can only be built from source. The source file can be downnloaded from [CRAN Archive](https://cran.r-project.org/src/contrib/Archive/grofit/grofit_1.1.1-1.tar.gz). In R, go to "Packages & Data", then "Package Installer". In the "Package Installer", select "Local Source Package" option, which pops up the window to locate the downloaded source file for installation.
-* All of the other packages can be installed in the regular way.
+
+# Install R Libraries
+
+Most dependencies listed in the DESCRIPTION file are installable by standard means, but the ```grofit``` library can only be built from source. 
+
+## Installation of ```grofit``` using RStudio:
+
+1. Download the source package from here: [CRAN Archive](https://cran.r-project.org/src/contrib/Archive/grofit/grofit_1.1.1-1.tar.gz). 
+2. In R, go to "Tools", then "Install Packages"
+3. From the first dropdown menu titled "Install from:", select "Package Archive File (.tgz; tar.gz)".
+4. A window will pop up, where you should browse to find the source package that you downloaded in Step #1.
+5. Click "Install".
+
+![R Studio Installation](https://imgur.com/bfRpbNf.jpg)
+
+
+## Installation of ```grofit``` using R GUI:
+
+1. Download the source package from here: [CRAN Archive](https://cran.r-project.org/src/contrib/Archive/grofit/grofit_1.1.1-1.tar.gz). 
+2. Go to "Packages & Data", then "Package Installer". 
+3. Select "Local Source Package", then find the source package that you downloaded in Step #1.
+4. In the R console, type:
+
+    install.packages('PATH_TO_PACKAGE/grofit_1.1.1-1.tar.gz', repos=NULL)
+
+   where PATH_TO_PACKAGE should be substituted with the path to the source package.
+
+![R GUI Installation](https://imgur.com/rB3eiEx.jpg)
 
 
 # Running the Code
