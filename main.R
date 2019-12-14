@@ -35,7 +35,7 @@ planteye_data <- arrange(planteye_data, unit, timestamp)
 
 # start the analysis
 for (property in properties) {
-   # data cleaning
+    # data cleaning
     planteye_data_cleaned <- data_cleaning(planteye_data, property)
     # time range for the growth curve
     time_range <- planteye_data_cleaned %>% group_by(unit) %>% summarize(mintime = min(timestamp), maxtime = max(timestamp))
