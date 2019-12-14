@@ -28,5 +28,5 @@ r_github_packages:
 #   - Rscript -e 'lintr::lint_package()'
 
 # Lint
-script:
-  - ./travis-linter.sh
+# script:
+#   - ./travis-linter.sh

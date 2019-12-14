@@ -14,7 +14,7 @@ data_cleaning <- function(planteye_data, property) {
     error_unit <- NA
     planteye_data_cleaned <- NULL
     for (b in dis_unit$unit) {
-        print(b) 
+        print(b)
         data_property_unit <- data_property %>% filter(unit == b)
         result_lm <- lm(Height~ timestamp, data = data_property_unit)
         resid_lm <- residuals(result_lm)
@@ -27,15 +27,15 @@ data_cleaning <- function(planteye_data, property) {
             if (! result_grofit$fitFlag) {
                 error_unit <- c(error_unit, b)
             }
-            # keep units with larger than 0.3 R2 of growth model fitting 
-            else if (rsquare(result_grofit$fit.data, result_grofit$raw.data)<0.3) {
-                error_unit <- c(error_unit, b)                 
+            # keep units with larger than 0.3 R^2 of growth model fitting
+            else if (rsquare(result_grofit$fit.data, result_grofit$raw.data) < 0.3) {
+                error_unit <- c(error_unit, b)
             } else {
-                planteye_data_cleaned<-rbind(planteye_data_cleaned, data_property_unit) 
+                planteye_data_cleaned <- rbind(planteye_data_cleaned, data_property_unit)
             }
         }
         else {
-            error_unit <- c(error_unit, b) 
+            error_unit <- c(error_unit, b)
         }
     }
     error_unit <- error_unit[-1]

@@ -20,8 +20,8 @@ GetPhenospexAUC <- function(planteye_data, property, mintime, maxtime, spline) {
     auc_temp <- rep(NA, n_dis_unit)
     genotype <- rep(NA, n_dis_unit)
 
-    data_property <- planteye_data %>% 
-            dplyr::select(timestamp, property, unit, genotype) %>% 
+    data_property <- planteye_data %>%
+            dplyr::select(timestamp, property, unit, genotype) %>%
             mutate_(y = property)
     i <- 1
     for (b in dis_unit$unit) {
@@ -30,10 +30,10 @@ GetPhenospexAUC <- function(planteye_data, property, mintime, maxtime, spline) {
         # align the prediction range for all the units
         startx <- (mintime - as.numeric(data_property_unit$timestamp[1])) / 3600
         endx <- (maxtime - as.numeric(data_property_unit$timestamp[1])) / 3600
-        data_property_unit$timestamp <- 
+        data_property_unit$timestamp <-
           as.numeric(data_property_unit$timestamp - data_property_unit$timestamp[1]) / 3600
         # estimate smooth spline
-        if(spline) {
+        if (spline) {
             predict_values <- PredictGrowthCurve(data_property_unit,
                                         "timestamp",
                                         property,
@@ -45,7 +45,7 @@ GetPhenospexAUC <- function(planteye_data, property, mintime, maxtime, spline) {
             result <- gcFitModel(data_property_unit$timestamp, data_property_unit$Height)
         }
         lentime <- (maxtime - mintime) / 3600
-        auc_temp[i] <- auc(predict_values$x, predict_values$y) - lentime * predict_values$y[1] 
+        auc_temp[i] <- auc(predict_values$x, predict_values$y) - lentime * predict_values$y[1]
         genotype[i] <- as.character(data_property_unit$genotype[1])
         i <- i + 1
     }

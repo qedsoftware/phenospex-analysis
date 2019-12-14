@@ -8,7 +8,16 @@ Description: Phenospex Analysis investigates parametric data acquired from
     the HortControl software hich interfaces with the Phenospex phenotyping
     rig that is based on 3D laser triangulation. The current topics of 
     investigation include data cleaning and growth curve fitting.
+Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
+Suggests:
+    ggplot2,
+    knitr
+Imports: 
+    dplyr,
+    MESS (>= 0.5.6),
+    mgcv
+VignetteBuilder: knitr
 URL: https://github.com/qedsoftware/phenospex-analysis
 BugReports: https://github.com/qedsoftware/phenospex-analysis/issues
-Depends: R (>= 3.3.0)
+Encoding: UTF-8
