@@ -12,7 +12,3 @@ License: MIT + file LICENSE
 URL: https://github.com/qedsoftware/phenospex-analysis
 BugReports: https://github.com/qedsoftware/phenospex-analysis/issues
 Depends: R (>= 3.3.0)
-Imports:
-    dplyr (>= 1.1),
-    MESS (>= 0.5.5),
-    mgcv (>= 1.8)
